@@ -40,8 +40,8 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     MyObservable dataChangeSignal;
     Integer saveDataPoints = 100;
     Integer countSinceUpdate = 0;
-    Integer windowSize = 60;
-    Integer updateFrequency = 30;
+    Integer windowSize = 30;
+    Integer updateFrequency = 20;
 
 
 
@@ -225,7 +225,8 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         private LinkedList<SeriesNode> data;
         private LinkedList<Double> bpmFilter = new LinkedList<>();
         private String title;
-        private static final int MEDIAN_FILTER_SIZE = 3;
+        private static final int MEDIAN_FILTER_SIZE = 5;
+        private static final int SMOOTHING_RATE = 3;
 
         public DynamicSeries(LinkedList inputData, String title) {
             this.data = inputData;
@@ -257,10 +258,10 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
             if (data.size() == saveDataPoints) {
                 data.pop();
             }
-            //do a little filtering on the previous data
-            if(data.size() > MEDIAN_FILTER_SIZE) {
+            //do a little smoothing on the previous data
+            if(data.size() > SMOOTHING_RATE) {
                 Iterator<SeriesNode> nodeIter = data.descendingIterator();
-                Double[] lastThree = new Double[3];
+                Double[] lastThree = new Double[SMOOTHING_RATE];
                 lastThree[0] = nodeIter.next().getValue();
                 lastThree[1] = nodeIter.next().getValue();
                 lastThree[2] = newValue;
